@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>印章小助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            padding: 50px 0;
+        }
+
+        /* 主容器 - 关键：统一左右内边距（30px），消除间距差异 */
+        .container {
+            width: 95%; 
+            max-width: 1200px; 
+            margin: 0 auto;
+            background-color: rgb(230, 241, 255);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px 30px; /* 左右内边距统一为30px，保证对称 */
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .header img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 15px;
+            border-radius: 50%;
+            border: 3px solid #2d6cd8;
+        }
+
+        .main-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2d6cd8;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #666;
+        }
+
+        /* 核心功能容器 - 关键：space-between让色块贴左右，gap控制中间间距 */
+        .main-function-container {
+            justify-content: space-between; /* 左右贴边，实现间距对称 */
+            align-items: stretch; 
+            gap: 25px; /* 中间间距适中，不影响左右对称 */
+            margin-bottom: 30px;
+            display: flex;
+            width: 100%; /* 占满主容器宽度，保证对称 */
+        }
+
+        /* 左侧橙色色块 - 宽度占比适配，保证与右侧对称 */
+        .section-apply {
+            width: 25%; 
+            min-width: 260px; 
+            max-width: 300px; 
+            padding: 30px 20px;
+            border-radius: 10px;
+            background-color: rgb(241, 137, 26);
+            display: flex;
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center;
+        }
+
+        /* 右侧深蓝色色块 - 宽度占比适配，贴右侧边缘 */
+        .section-seal {
+            width: 73%; /* 微调宽度占比，适配space-between，保证左右间距对称 */
+            max-width: 850px; 
+            padding: 30px 20px;
+            border-radius: 10px;
+            background-color: rgb(32, 160, 213);
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+        }
+
+        /* 以下样式均保留原有设置，无改动 */
+        .custom-title {
+            font-size: 26px;
+            font-weight: 600;
+            color: #f0f9ff;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-block;
+            transition: background-color 0.3s;
+            margin-bottom: 25px;
+        }
+
+        .custom-title:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .apply-tips-box {
+            font-size: 15px;
+            color: #f0f9ff;
+            line-height: 1.6;
+            display: none;
+            margin-top: 10px;
+        }
+
+        .section-apply:hover .apply-tips-box {
+            display: block;
+        }
+
+        .tips-link {
+            color: #f0f9ff;
+            text-decoration: underline;
+        }
+
+        .tips-link:hover {
+            color: #ffffff;
+        }
+
+        .seal-sub-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            width: 100%; 
+            flex-wrap: wrap;
+        }
+
+        .sub-item {
+            cursor: pointer;
+            width: fit-content;
+            position: relative;
+            text-align: center;
+        }
+
+        .sub-item-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #f0f9ff;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: background-color 0.3s;
+            display: inline-block;
+            min-width: 110px;
+            text-align: center;
+        }
+
+        .sub-item-title:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .sub-tips-box {
+            font-size: 14px;
+            line-height: 1.7;
+            display: none;
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            margin-top: 5px;
+            transform: translateX(-50%);
+            background-color: #fff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 10;
+            min-width: 180px;
+            max-width: 200px; 
+            text-align: left;
+        }
+
+        .sub-item:hover .sub-tips-box {
+            display: block;
+        }
+
+        .sub-tips-link {
+            color: #2d6cd8;
+            text-decoration: underline;
+            display: block;
+        }
+
+        .sub-tips-link:hover {
+            color: #1a56c9;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="sealhelper.png" alt="印章图标">
+            <h1 class="main-title">印章小助手</h1>
+            <p class="subtitle">便捷处理各类印章申请业务</p>
+        </div>
+
+        <div class="main-function-container">
+            <div class="section-apply">
+                <a href="https://seal.zte.com.cn/index.htm" target="_blank">
+                    <div class="custom-title">用印申请</div>
+                </a>
+                <div class="apply-tips-box">
+                    印章使用参考 
+                    <a href="https://i.zte.com.cn/index/ispace/#/space/107d0160017749b9af0292051611a313/wiki/page/3acace6e409243d4825a1a8b9bfa1b64/view" 
+                       target="_blank" 
+                       class="tips-link">【用章服务与管理】</a>
+                </div>
+            </div>
+
+            <div class="section-seal">
+                <a href="https://seal.zte.com.cn/index.htm" target="_blank">
+                    <div class="custom-title">印章管理</div>
+                </a>
+                
+                <div class="seal-sub-container">
+                    <div class="sub-item">
+                        <div class="sub-item-title">刻章申请</div>
+                        <div class="sub-tips-box">
+                            <a href="https://i.zte.com.cn/index/ispace/#/space/361bf21f8f3e44b4ba05a78185449cae/wiki/page/bcbfa6cd70144cd5840460e825e97156/view" 
+                               target="_blank" 
+                               class="sub-tips-link">刻制单枚实体章</a>
+                            <a href="https://i.zte.com.cn/index/ispace/#/space/361bf21f8f3e44b4ba05a78185449cae/wiki/page/691e729c6b024e28a7d5f621bbdd4886/view" 
+                               target="_blank" 
+                               class="sub-tips-link">内部平台电子章刻制</a>
+                            <a href="https://i.zte.com.cn/index/ispace/#/space/361bf21f8f3e44b4ba05a78185449cae/wiki/page/f1bf9e2699e34e3a9a5f88e2ca47aa56/view" 
+                               target="_blank" 
+                               class="sub-tips-link">外部平台电子章刻制（海外）</a>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-item">
+                        <div class="sub-item-title">变更申请</div>
+                        <div class="sub-tips-box">
+                            <a href="https://i.zte.com.cn/index/ispace/#/space/361bf21f8f3e44b4ba05a78185449cae/wiki/page/5d7a339c13014fb48de8c2f43e72c5b0/view" 
+                               target="_blank" 
+                               class="sub-tips-link">变更印章保管人</a>
+                            <a href="https://i.zte.com.cn/index/ispace/#/space/361bf21f8f3e44b4ba05a78185449cae/wiki/page/f7edf4d7e99748489be1b158d3b08378/view" 
+                               target="_blank" 
+                               class="sub-tips-link">变更印章管理人</a>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-item">
+                        <div class="sub-item-title">停用申请</div>
+                        <div class="sub-tips-box">
+                            <a href="https://i.zte.com.cn/index/ispace/#/space/361bf21f8f3e44b4ba05a78185449cae/wiki/page/a67882d9994049d29417f5af3415c3db/view" 
+                               target="_blank" 
+                               class="sub-tips-link">印章停用</a>
+                            <a href="https://i.zte.com.cn/index/ispace/#/space/361bf21f8f3e44b4ba05a78185449cae/wiki/page/5bdff352c1b146378125e3510409a38d/view" 
+                               target="_blank" 
+                               class="sub-tips-link">印章启用</a>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-item">
+                        <div class="sub-item-title">销毁申请</div>
+                        <div class="sub-tips-box">
+                            <a href="https://i.zte.com.cn/index/ispace/#/space/361bf21f8f3e44b4ba05a78185449cae/wiki/page/d28bcb1a3ce4463aac467312f61a0e4e/view" 
+                               target="_blank" 
+                               class="sub-tips-link">销毁实体章</a>
+                            <a href="https://i.zte.com.cn/index/ispace/#/space/361bf21f8f3e44b4ba05a78185449cae/wiki/page/bc12b17e7883409aa9f2710cf34e9bbe/view" 
+                               target="_blank" 
+                               class="sub-tips-link">销毁电子章</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
